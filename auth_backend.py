@@ -2,10 +2,9 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
-
+import os
 app = Flask(__name__)
-app.config['JWT_SECRET_KEY'] = 'your-secret-key'
-
+app.config['JWT_SECRET_KEY'] = os.environ.get('JWT_SECRET_KEY', 'default-secret-for-local-testing')
 CORS(app)
 bcrypt = Bcrypt(app)
 jwt = JWTManager(app)
@@ -47,4 +46,5 @@ def get_user():
     return jsonify(current_user), 200
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get('PORT', 5000))  # Render provides PORT
+    app.run(host='0.0.0.0', port=port, debug=False)
